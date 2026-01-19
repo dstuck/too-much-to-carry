@@ -302,6 +302,22 @@ public class PlayerController : MonoBehaviour
     {
         return hand == HandSlot.Left ? leftHand : rightHand;
     }
+    
+    /// <summary>
+    /// Gets the current facing direction of the player.
+    /// </summary>
+    public Vector2 GetFacingDirection()
+    {
+        return facingDirection;
+    }
+    
+    /// <summary>
+    /// Gets the world position of the tile in front of the player.
+    /// </summary>
+    public Vector3 GetFrontTileWorldPosition()
+    {
+        return GetFrontTilePosition();
+    }
 }
 
 /// <summary>
