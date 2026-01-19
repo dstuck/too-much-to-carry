@@ -165,5 +165,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isLeftHand: 1
+  defaultEmptySprite: {fileID: -209663254022021088, guid: b9d75889fd05044acacd7d98255b9f9d, type: 3}
   backgroundImage: {fileID: 0}
   itemImage: {fileID: 0}
