@@ -46,9 +46,9 @@ There will be a green and a blue square representing left and right hands and di
 
 v0.1
 
-- [ ] movable character (with stand in sprite)
-- [ ] two babies that can be picked up and put down
-- [ ] item slots showing current held item
+- [x] movable character (with stand in sprite)
+- [x] two babies that can be picked up and put down
+- [x] item slots showing current held item
 
 v0.2
 - [ ] add baby crying when mad (object and item)

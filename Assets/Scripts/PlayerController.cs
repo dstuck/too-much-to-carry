@@ -272,11 +272,52 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks if an item can be placed at the specified position.
+    /// Returns false if any object at that position has the "BlocksPlacement" tag.
+    /// </summary>
+    /// <param name="position">World position to check</param>
+    /// <returns>True if placement is allowed, false if blocked</returns>
+    public bool CanPlaceItemAt(Vector3 position)
+    {
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.NoFilter();
+        filter.useTriggers = true; // Include trigger colliders
+
+        Collider2D[] hits = new Collider2D[10];
+        int hitCount = Physics2D.OverlapPoint(position, filter, hits);
+
+        // Check if any object at this position blocks placement
+        for (int i = 0; i < hitCount; i++)
+        {
+            // Skip the player itself
+            if (hits[i].gameObject == gameObject)
+            {
+                continue;
+            }
+
+            // Check for BlocksPlacement tag
+            if (hits[i].gameObject.CompareTag("BlocksPlacement"))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// Puts down an item from the specified hand at the target position.
     /// </summary>
     private void PutDownItem(HoldableItem item, Vector3 position, HandSlot hand)
     {
         if (item == null) return;
+
+        // Check if placement is allowed at this position
+        if (!CanPlaceItemAt(position))
+        {
+            Debug.Log($"Cannot place {item.name} at {position} - placement blocked");
+            return;
+        }
         
         // Enable GameObject at position
         item.OnPutDown(position);

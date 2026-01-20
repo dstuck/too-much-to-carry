@@ -102,6 +102,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6040594058580662588}
+  lonelinessRateOnGround: 1
+  lonelinessRateInCrib: 0.5
+  cryingThreshold: 3
+  normalSprite: {fileID: -4276666234666725111, guid: 7c3d7dae2702648609f2f2533ae4a4eb, type: 3}
+  cryingSprite: {fileID: -5462981953920117217, guid: f481b6e9d8f0f44048725838a197668c, type: 3}
+  cryClips: []
 --- !u!61 &4152325675897731266
 BoxCollider2D:
   m_ObjectHideFlags: 0

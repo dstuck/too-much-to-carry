@@ -13,6 +13,7 @@ public class FrontTileHighlight : MonoBehaviour
     
     [Header("Visual Settings")]
     [SerializeField] private Color outlineColor = new Color(0, 0, 0, 0.3f); // Black with 30% alpha
+    [SerializeField] private Color blockedColor = new Color(1, 0, 0, 0.5f); // Red with 50% alpha
     [SerializeField] private float lineWidth = 0.02f;
     
     private LineRenderer lineRenderer;
@@ -79,6 +80,11 @@ public class FrontTileHighlight : MonoBehaviour
             UpdateHighlight(currentCell);
             lastHighlightedCell = currentCell;
         }
+        else
+        {
+            // Even if cell hasn't changed, check if placement status changed
+            UpdateHighlightColor(frontTilePosition);
+        }
     }
     
     private Vector3 GetFrontTilePosition()
@@ -125,5 +131,33 @@ public class FrontTileHighlight : MonoBehaviour
         
         lineRenderer.SetPositions(corners);
         lineRenderer.enabled = true;
+
+        // Update color based on placement blocking
+        UpdateHighlightColor(cellCenter);
+    }
+
+    /// <summary>
+    /// Updates the highlight color based on whether placement is blocked.
+    /// </summary>
+    private void UpdateHighlightColor(Vector3 position)
+    {
+        if (playerController == null)
+        {
+            return;
+        }
+
+        // Check if placement is blocked
+        bool canPlace = playerController.CanPlaceItemAt(position);
+        Color currentColor = canPlace ? outlineColor : blockedColor;
+
+        // Update line renderer colors
+        lineRenderer.startColor = currentColor;
+        lineRenderer.endColor = currentColor;
+
+        // Update material color if it exists
+        if (lineRenderer.material != null)
+        {
+            lineRenderer.material.color = currentColor;
+        }
     }
 }

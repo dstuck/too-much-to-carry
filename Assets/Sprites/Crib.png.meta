@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: f481b6e9d8f0f44048725838a197668c
+guid: d49d384deae9543a5bfc2cffceb7ddeb
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5903870939292292127
-    second: sprGiantBabyCry_0
-  - first:
-      213: -5462981953920117217
-    second: sprGiantBabyCry_1
-  - first:
-      213: 1995684352192325481
-    second: sprGiantBabyCry_2
-  - first:
-      213: -2455437061776016340
-    second: sprGiantBabyCry_3
+      213: 2249889671537166569
+    second: Crib_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -60,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 150
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sprGiantBabyCry_0
+      name: Crib_0
       rect:
         serializedVersion: 2
-        x: 7
-        y: 0
-        width: 18
-        height: 16
+        x: 1
+        y: 1
+        width: 28
+        height: 25
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,74 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f14d448d653cee150800000000000000
-      internalID: 5903870939292292127
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: sprGiantBabyCry_1
-      rect:
-        serializedVersion: 2
-        x: 33
-        y: 0
-        width: 30
-        height: 16
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f16d8366bd69f24b0800000000000000
-      internalID: -5462981953920117217
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: sprGiantBabyCry_2
-      rect:
-        serializedVersion: 2
-        x: 35
-        y: 11
-        width: 6
-        height: 5
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 967aa30485812bb10800000000000000
-      internalID: 1995684352192325481
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: sprGiantBabyCry_3
-      rect:
-        serializedVersion: 2
-        x: 55
-        y: 11
-        width: 6
-        height: 5
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c2cf28470098cedd0800000000000000
-      internalID: -2455437061776016340
+      spriteID: 9e80bcf5cb6393f10800000000000000
+      internalID: 2249889671537166569
       vertices: []
       indices: 
       edges: []
@@ -223,10 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sprGiantBabyCry_0: 5903870939292292127
-      sprGiantBabyCry_1: -5462981953920117217
-      sprGiantBabyCry_2: 1995684352192325481
-      sprGiantBabyCry_3: -2455437061776016340
+      Crib_0: 2249889671537166569
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
