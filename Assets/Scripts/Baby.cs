@@ -39,7 +39,6 @@ public class Baby : HoldableItem
     private BabyLocation currentLocation = BabyLocation.OnGround;
     private bool isCrying = false;
     private AudioSource audioSource;
-    private SpriteRenderer spriteRenderer;
 
     /// <summary>
     /// Calculates the current anger/mad level from all metrics.
@@ -175,10 +174,14 @@ public class Baby : HoldableItem
             spriteRenderer.sprite = normalSprite;
         }
 
-        // Stop audio
-        if (audioSource != null && audioSource.isPlaying)
+        // Stop audio and clear clip to prevent it from resuming
+        if (audioSource != null)
         {
-            audioSource.Stop();
+            if (audioSource.isPlaying)
+            {
+                audioSource.Stop();
+            }
+            audioSource.clip = null; // Clear the clip to prevent it from resuming
         }
     }
 
@@ -235,5 +238,17 @@ public class Baby : HoldableItem
 
         // Set location based on crib detection
         SetLocation(isInCrib ? BabyLocation.InCrib : BabyLocation.OnGround);
+
+        // Ensure crying state matches current anger level after being put down
+        // This prevents audio from resuming if it was playing when GameObject was disabled
+        float anger = CalculateAnger();
+        if (anger < cryingThreshold && isCrying)
+        {
+            StopCrying();
+        }
+        else if (anger >= cryingThreshold && !isCrying)
+        {
+            StartCrying();
+        }
     }
 }

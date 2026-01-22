@@ -70,12 +70,79 @@ public class PlayerController : MonoBehaviour
         if (moveInput.magnitude > 0.1f)
         {
             Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0) * moveSpeed * Time.deltaTime;
-            transform.position += movement;
+            Vector3 newPosition = transform.position + movement;
+            
+            // Check if movement would collide with a wall or other blocking object
+            if (CanMoveInDirection(moveInput.normalized, movement.magnitude))
+            {
+                transform.position = newPosition;
+            }
             
             // Update facing direction based on movement
             facingDirection = moveInput.normalized;
             lastMoveInput = moveInput;
         }
+    }
+
+    /// <summary>
+    /// Checks if the player can move in the specified direction.
+    /// Uses a box cast to check only the path being traversed, not adjacent tiles.
+    /// </summary>
+    /// <param name="direction">Normalized movement direction</param>
+    /// <param name="distance">Distance to move</param>
+    /// <returns>True if movement is allowed, false if blocked</returns>
+    private bool CanMoveInDirection(Vector2 direction, float distance)
+    {
+        // Get player's collider to determine check size
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        Vector2 boxSize = Vector2.zero;
+        
+        if (playerCollider != null)
+        {
+            // Use collider bounds to determine box size
+            Bounds bounds = playerCollider.bounds;
+            boxSize = new Vector2(bounds.size.x * 0.8f, bounds.size.y * 0.8f); // Slightly smaller to avoid edge cases
+        }
+        else
+        {
+            // Fallback: use a small box if no collider
+            boxSize = new Vector2(0.1f, 0.1f);
+        }
+
+        // Use box cast to check only the movement path
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.NoFilter();
+        filter.useTriggers = false; // Don't check trigger colliders for movement blocking
+
+        RaycastHit2D[] hits = new RaycastHit2D[10];
+        int hitCount = Physics2D.BoxCast(
+            transform.position,
+            boxSize,
+            0f, // No rotation
+            direction,
+            filter,
+            hits,
+            distance
+        );
+
+        // Check if any hit is a blocking object (walls with BlocksPlacement tag)
+        for (int i = 0; i < hitCount; i++)
+        {
+            // Skip the player itself
+            if (hits[i].collider.gameObject == gameObject)
+            {
+                continue;
+            }
+
+            // Check if this is a wall or other blocking object
+            // Objects with BlocksPlacement tag block both placement and movement
+            if (hits[i].collider.gameObject.CompareTag("BlocksPlacement"))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -273,35 +340,20 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>
     /// Checks if an item can be placed at the specified position.
-    /// Returns false if any object at that position has the "BlocksPlacement" tag.
+    /// Uses the FrontTileHighlight's trigger collider to detect blocking objects.
     /// </summary>
     /// <param name="position">World position to check</param>
     /// <returns>True if placement is allowed, false if blocked</returns>
     public bool CanPlaceItemAt(Vector3 position)
     {
-        ContactFilter2D filter = new ContactFilter2D();
-        filter.NoFilter();
-        filter.useTriggers = true; // Include trigger colliders
-
-        Collider2D[] hits = new Collider2D[10];
-        int hitCount = Physics2D.OverlapPoint(position, filter, hits);
-
-        // Check if any object at this position blocks placement
-        for (int i = 0; i < hitCount; i++)
+        // Find the FrontTileHighlight component
+        FrontTileHighlight highlight = FindFirstObjectByType<FrontTileHighlight>();
+        if (highlight != null)
         {
-            // Skip the player itself
-            if (hits[i].gameObject == gameObject)
-            {
-                continue;
-            }
-
-            // Check for BlocksPlacement tag
-            if (hits[i].gameObject.CompareTag("BlocksPlacement"))
-            {
-                return false;
-            }
+            return !highlight.IsPlacementBlocked();
         }
 
+        // Fallback: if no highlight found, allow placement
         return true;
     }
 

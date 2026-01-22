@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class HoldableItem : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] protected SpriteRenderer spriteRenderer;
     
     /// <summary>
     /// Gets the sprite to display in the UI when this item is held.
