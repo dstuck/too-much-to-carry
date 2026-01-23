@@ -31,9 +31,9 @@ public class Baby : HoldableItem
     [SerializeField] private AudioClip[] cryClips;
 
     [Header("Crawling Settings")]
-    [SerializeField] private float crawlSpeed = 0.3f; // Slower than player
-    [SerializeField] private float turnRate = 30f; // Degrees per second
-    [SerializeField] private float turnChangeInterval = 2f; // How often to change direction (seconds)
+    [SerializeField] private float crawlSpeed = 0.05f; // Slower than player
+    [SerializeField] private float turnRate = 50f; // Degrees per second
+    [SerializeField] private float turnChangeInterval = 1f; // How often to change direction (seconds)
 
     // Hidden metrics (only loneliness used for v0.2)
     private float hunger = 0f;

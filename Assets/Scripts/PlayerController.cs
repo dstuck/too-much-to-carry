@@ -157,13 +157,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnLeftInteract(InputAction.CallbackContext context)
     {
-        Debug.Log("Left interact pressed");
         Interact(HandSlot.Left);
     }
 
     private void OnRightInteract(InputAction.CallbackContext context)
     {
-        Debug.Log("Right interact pressed");
         Interact(HandSlot.Right);
     }
 
@@ -175,8 +173,6 @@ public class PlayerController : MonoBehaviour
     {
         HoldableItem heldItem = GetHeldItem(hand);
         Vector3 frontTilePosition = GetFrontTilePosition();
-        
-        Debug.Log($"Interact called - Hand: {hand}, Held item: {(heldItem != null ? heldItem.name : "null")}, Front tile: {frontTilePosition}");
         
         // Detect what's at the front tile
         // Use ContactFilter2D to include trigger colliders (babies use triggers)
@@ -198,7 +194,6 @@ public class PlayerController : MonoBehaviour
             // Skip the player itself
             if (collider.gameObject == gameObject)
             {
-                Debug.Log($"Skipping player collider: {collider.gameObject.name}");
                 continue;
             }
             
@@ -208,7 +203,6 @@ public class PlayerController : MonoBehaviour
             {
                 frontObject = collider.gameObject;
                 foundItem = item;
-                Debug.Log($"Found HoldableItem: {item.name} at front tile");
                 break;
             }
         }
@@ -216,7 +210,6 @@ public class PlayerController : MonoBehaviour
         // If no collider hit, try finding HoldableItems by distance (fallback)
         if (frontObject == null)
         {
-            Debug.Log("No collider found, trying distance-based detection...");
             HoldableItem[] allItems = FindObjectsByType<HoldableItem>(FindObjectsSortMode.None);
             float closestDistance = float.MaxValue;
             HoldableItem closestItem = null;
@@ -226,7 +219,6 @@ public class PlayerController : MonoBehaviour
                 if (!item.gameObject.activeInHierarchy) continue;
                 
                 float distance = Vector3.Distance(item.transform.position, frontTilePosition);
-                Debug.Log($"Checking {item.name} at distance {distance}");
                 if (distance < 0.2f && distance < closestDistance) // Within ~1.25 cells (more forgiving)
                 {
                     closestDistance = distance;
@@ -238,7 +230,6 @@ public class PlayerController : MonoBehaviour
             {
                 frontObject = closestItem.gameObject;
                 foundItem = closestItem;
-                Debug.Log($"Found closest item by distance: {closestItem.name} at {closestDistance}");
             }
         }
         
@@ -262,23 +253,13 @@ public class PlayerController : MonoBehaviour
                 HoldableItem item = frontObject.GetComponent<HoldableItem>();
                 if (item != null)
                 {
-                    Debug.Log($"Picking up {item.name} with {hand} hand");
                     PickUpItem(item, hand);
                 }
-                else
-                {
-                    Debug.Log($"Front object {frontObject.name} doesn't have HoldableItem component");
-                }
-            }
-            else
-            {
-                Debug.Log("No object found at front tile");
             }
         }
         else
         {
             // Item in hand - put down
-            Debug.Log($"Putting down {heldItem.name} from {hand} hand");
             PutDownItem(heldItem, frontTilePosition, hand);
         }
     }
@@ -290,7 +271,6 @@ public class PlayerController : MonoBehaviour
     {
         if (grid == null)
         {
-            Debug.LogWarning("Grid not found! Using player position + facing direction.");
             return transform.position + (Vector3)(facingDirection * 0.16f);
         }
         
@@ -367,7 +347,6 @@ public class PlayerController : MonoBehaviour
         // Check if placement is allowed at this position
         if (!CanPlaceItemAt(position))
         {
-            Debug.Log($"Cannot place {item.name} at {position} - placement blocked");
             return;
         }
         

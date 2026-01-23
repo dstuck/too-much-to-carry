@@ -178,7 +178,6 @@ public class FrontTileHighlight : MonoBehaviour
         if (other.gameObject.CompareTag("BlocksPlacement"))
         {
             blockingObjects.Add(other.gameObject);
-            Debug.Log($"OnTriggerEnter2D: {other.gameObject.name} entered highlight at {transform.position}");
         }
     }
 
@@ -191,7 +190,6 @@ public class FrontTileHighlight : MonoBehaviour
         if (other.gameObject.CompareTag("BlocksPlacement"))
         {
             blockingObjects.Remove(other.gameObject);
-            Debug.Log($"OnTriggerExit2D: {other.gameObject.name} exited highlight at {transform.position}");
         }
     }
 
@@ -205,7 +203,6 @@ public class FrontTileHighlight : MonoBehaviour
         Collider2D highlightCollider = GetComponent<Collider2D>();
         if (highlightCollider == null)
         {
-            Debug.LogWarning("FrontTileHighlight: No Collider2D found! Make sure the highlight has a trigger collider.");
             return;
         }
 
@@ -234,11 +231,6 @@ public class FrontTileHighlight : MonoBehaviour
                 if (distance <= maxDistance)
                 {
                     blockingObjects.Add(hitObject);
-                    Debug.Log($"CheckOverlappingObjects: {hitObject.name} is blocking (distance to closest point: {distance})");
-                }
-                else
-                {
-                    Debug.Log($"CheckOverlappingObjects: {hitObject.name} overlaps trigger but too far (distance: {distance}, tile: {tileCenter}, wall bounds: {wallBounds.min} to {wallBounds.max})");
                 }
             }
         }
@@ -249,11 +241,6 @@ public class FrontTileHighlight : MonoBehaviour
     /// </summary>
     public bool IsPlacementBlocked()
     {
-        bool blocked = blockingObjects.Count > 0;
-        if (blocked)
-        {
-            Debug.Log($"IsPlacementBlocked: true, {blockingObjects.Count} blocking objects");
-        }
-        return blocked;
+        return blockingObjects.Count > 0;
     }
 }

@@ -19,14 +19,8 @@ public class SoundFXManager : MonoBehaviour
 
     public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume = 1.0f)
     {
-        if (audioClip == null)
+        if (audioClip == null || spawnTransform == null)
         {
-            Debug.LogWarning("[SoundFXManager] AudioClip is null!");
-            return;
-        }
-        if (spawnTransform == null)
-        {
-            Debug.LogWarning("[SoundFXManager] Spawn transform is null!");
             return;
         }
 
@@ -47,7 +41,6 @@ public class SoundFXManager : MonoBehaviour
     {
         if (audioClips == null || audioClips.Length == 0)
         {
-            Debug.LogWarning($"[SoundFXManager] No clips provided for random selection. Array is null: {audioClips == null}, Length: {(audioClips != null ? audioClips.Length : 0)}");
             return;
         }
 
