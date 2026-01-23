@@ -373,6 +373,12 @@ public class Baby : HoldableItem
             {
                 return false;
             }
+
+            // Check if this is a crib (babies shouldn't crawl into cribs, only be placed there)
+            if (hits[i].collider.gameObject.CompareTag("Crib"))
+            {
+                return false;
+            }
         }
 
         return true;

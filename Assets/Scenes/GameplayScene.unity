@@ -1662,7 +1662,7 @@ PrefabInstance:
     - target: {fileID: 8283456092978092409, guid: 2388ff5673bc6445f9a703d44c72a316, type: 3}
       propertyPath: 'cryClips.Array.data[5]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8300000, guid: ac1fc9c15afba41b0aa7f0c62b69b8c9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
