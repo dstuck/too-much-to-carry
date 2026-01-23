@@ -51,11 +51,11 @@ v0.1
 - [x] item slots showing current held item
 
 v0.2
-- [ ] add baby crying when mad (object and item)
+- [x] add baby crying when mad (object and item)
 - [ ] add baby crawling
-- [ ] babies get mad after sitting on ground for more than 3 seconds
-- [ ] add crib that baby can be put into
-- [ ] babies get mad after sitting in crib
+- [x] babies get mad after sitting on ground for more than 3 seconds
+- [x] add crib that baby can be put into
+- [x] babies get mad after sitting in crib
 
 v0.3
 - [ ] babies poo after random time

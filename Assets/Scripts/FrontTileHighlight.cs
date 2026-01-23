@@ -18,6 +18,7 @@ public class FrontTileHighlight : MonoBehaviour
     
     private LineRenderer lineRenderer;
     private Vector3Int lastHighlightedCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+    private Vector3 lastCheckedPosition = Vector3.zero;
     private System.Collections.Generic.HashSet<GameObject> blockingObjects = new System.Collections.Generic.HashSet<GameObject>();
     
     private void Awake()
@@ -76,20 +77,25 @@ public class FrontTileHighlight : MonoBehaviour
         Vector3Int currentCell = grid.WorldToCell(frontTilePosition);
         
         // Update highlight position to match front tile
-        Vector3 oldPosition = transform.position;
         transform.position = frontTilePosition;
         
         // Update if the cell changed (optimization: only update when needed)
         if (currentCell != lastHighlightedCell)
         {
-            // Clear blocking objects when moving to a new cell
-            blockingObjects.Clear();
             UpdateHighlight(currentCell);
             lastHighlightedCell = currentCell;
-            
-            // Manually check for overlapping objects at the new position
-            // OnTriggerEnter won't fire for objects already overlapping when we move the trigger
+        }
+        
+        // If position changed (including when turning), clear and re-check blocking objects
+        // OnTriggerEnter won't fire for objects already overlapping when we move the trigger
+        bool positionChanged = Vector3.Distance(lastCheckedPosition, frontTilePosition) > 0.001f;
+        if (positionChanged)
+        {
+            // Force physics to sync the collider position before checking
+            Physics2D.SyncTransforms();
+            blockingObjects.Clear();
             CheckOverlappingObjects();
+            lastCheckedPosition = frontTilePosition;
         }
         
         // Always update color every frame to reflect changes in blockingObjects
@@ -152,12 +158,6 @@ public class FrontTileHighlight : MonoBehaviour
         bool canPlace = blockingObjects.Count == 0;
         Color currentColor = canPlace ? outlineColor : blockedColor;
 
-        // Debug logging
-        if (blockingObjects.Count > 0)
-        {
-            Debug.Log($"UpdateHighlightColor: Blocked! Count={blockingObjects.Count}, Color={currentColor}");
-        }
-
         // Update line renderer colors
         lineRenderer.startColor = currentColor;
         lineRenderer.endColor = currentColor;
@@ -213,6 +213,10 @@ public class FrontTileHighlight : MonoBehaviour
         Collider2D[] hits = new Collider2D[20];
         int hitCount = highlightCollider.Overlap(new ContactFilter2D().NoFilter(), hits);
 
+        Vector3 tileCenter = transform.position;
+        // Grid cell size is 0.16, so check if wall is within half a cell of the tile center
+        float maxDistance = 0.08f;
+
         for (int i = 0; i < hitCount; i++)
         {
             GameObject hitObject = hits[i].gameObject;
@@ -220,8 +224,22 @@ public class FrontTileHighlight : MonoBehaviour
             // Only check objects with BlocksPlacement tag
             if (hitObject.CompareTag("BlocksPlacement"))
             {
-                blockingObjects.Add(hitObject);
-                Debug.Log($"CheckOverlappingObjects: {hitObject.name} is blocking");
+                // Check if the wall's collider bounds are close enough to the tile center
+                // This prevents false positives from large colliders in adjacent tiles
+                Bounds wallBounds = hits[i].bounds;
+                Vector3 closestPoint = wallBounds.ClosestPoint(tileCenter);
+                float distance = Vector3.Distance(tileCenter, closestPoint);
+                
+                // Only block if the closest point on the wall is within maxDistance of tile center
+                if (distance <= maxDistance)
+                {
+                    blockingObjects.Add(hitObject);
+                    Debug.Log($"CheckOverlappingObjects: {hitObject.name} is blocking (distance to closest point: {distance})");
+                }
+                else
+                {
+                    Debug.Log($"CheckOverlappingObjects: {hitObject.name} overlaps trigger but too far (distance: {distance}, tile: {tileCenter}, wall bounds: {wallBounds.min} to {wallBounds.max})");
+                }
             }
         }
     }
