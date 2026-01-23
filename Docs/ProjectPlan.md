@@ -46,16 +46,16 @@ There will be a green and a blue square representing left and right hands and di
 
 v0.1
 
-- [ ] movable character (with stand in sprite)
-- [ ] two babies that can be picked up and put down
-- [ ] item slots showing current held item
+- [x] movable character (with stand in sprite)
+- [x] two babies that can be picked up and put down
+- [x] item slots showing current held item
 
 v0.2
-- [ ] add baby crying when mad (object and item)
+- [x] add baby crying when mad (object and item)
 - [ ] add baby crawling
-- [ ] babies get mad after sitting on ground for more than 3 seconds
-- [ ] add crib that baby can be put into
-- [ ] babies get mad after sitting in crib
+- [x] babies get mad after sitting on ground for more than 3 seconds
+- [x] add crib that baby can be put into
+- [x] babies get mad after sitting in crib
 
 v0.3
 - [ ] babies poo after random time

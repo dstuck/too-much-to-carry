@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 2773404169030439847}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.188, z: 0.08869702}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!114 &8283456092978092409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +102,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6040594058580662588}
+  lonelinessRateOnGround: 1
+  lonelinessRateInCrib: 0.5
+  cryingThreshold: 3
+  normalSprite: {fileID: -4276666234666725111, guid: 7c3d7dae2702648609f2f2533ae4a4eb, type: 3}
+  cryingSprite: {fileID: -5462981953920117217, guid: f481b6e9d8f0f44048725838a197668c, type: 3}
+  cryClips:
+  - {fileID: 8300000, guid: 950c7f1b58c0a4ef7aed564539f3baa8, type: 3}
+  - {fileID: 8300000, guid: ae83678de857a45db8347a95ac922f61, type: 3}
+  - {fileID: 8300000, guid: 49f7e95e2f89149a9af6ee898636e68d, type: 3}
+  - {fileID: 8300000, guid: 7340dd6f29b574c70937e7b14b458a01, type: 3}
+  - {fileID: 8300000, guid: 3ac3f4be1460e4ef0bac09374db0bc4a, type: 3}
+  - {fileID: 8300000, guid: ac1fc9c15afba41b0aa7f0c62b69b8c9, type: 3}
+  crawlSpeed: 0.05
+  turnRate: 50
+  turnChangeInterval: 1
 --- !u!61 &4152325675897731266
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -140,7 +155,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.12, y: 0.10666667}
+    oldSize: {x: 0.10666667, y: 0.1}
     newSize: {x: 0.18, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

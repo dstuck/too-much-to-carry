@@ -1,0 +1,44 @@
+using UnityEngine;
+
+public class SoundFXManager : MonoBehaviour
+{
+    public static SoundFXManager instance;
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+    }
+
+    public void PlaySoundFXClip(AudioClip audioClip, Transform spawnTransform, float volume = 1.0f)
+    {
+        if (audioClip == null || spawnTransform == null)
+        {
+            return;
+        }
+
+        // Create a temporary GameObject with AudioSource
+        GameObject soundObject = new GameObject("TempAudioSource");
+        soundObject.transform.position = spawnTransform.position;
+        AudioSource audioSource = soundObject.AddComponent<AudioSource>();
+        
+        audioSource.clip = audioClip;
+        audioSource.volume = volume;
+        audioSource.Play();
+
+        float clipLength = audioClip.length;
+        Destroy(soundObject, clipLength);
+    }
+
+    public void PlayRandomSoundFXClip(AudioClip[] audioClips, Transform spawnTransform, float volume = 1.0f)
+    {
+        if (audioClips == null || audioClips.Length == 0)
+        {
+            return;
+        }
+
+        AudioClip randomClip = audioClips[Random.Range(0, audioClips.Length)];
+        PlaySoundFXClip(randomClip, spawnTransform, volume);
+    }
+}

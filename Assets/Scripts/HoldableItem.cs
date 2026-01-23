@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class HoldableItem : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] protected SpriteRenderer spriteRenderer;
     
     /// <summary>
     /// Gets the sprite to display in the UI when this item is held.
@@ -23,7 +23,7 @@ public class HoldableItem : MonoBehaviour
     /// <summary>
     /// Called when the item is picked up. Disables the GameObject.
     /// </summary>
-    public void OnPickedUp()
+    public virtual void OnPickedUp()
     {
         gameObject.SetActive(false);
     }
@@ -32,7 +32,7 @@ public class HoldableItem : MonoBehaviour
     /// Called when the item is put down. Enables the GameObject at the specified position.
     /// </summary>
     /// <param name="position">World position to place the item</param>
-    public void OnPutDown(Vector3 position)
+    public virtual void OnPutDown(Vector3 position)
     {
         transform.position = position;
         gameObject.SetActive(true);

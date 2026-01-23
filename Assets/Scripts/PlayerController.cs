@@ -70,12 +70,79 @@ public class PlayerController : MonoBehaviour
         if (moveInput.magnitude > 0.1f)
         {
             Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0) * moveSpeed * Time.deltaTime;
-            transform.position += movement;
+            Vector3 newPosition = transform.position + movement;
+            
+            // Check if movement would collide with a wall or other blocking object
+            if (CanMoveInDirection(moveInput.normalized, movement.magnitude))
+            {
+                transform.position = newPosition;
+            }
             
             // Update facing direction based on movement
             facingDirection = moveInput.normalized;
             lastMoveInput = moveInput;
         }
+    }
+
+    /// <summary>
+    /// Checks if the player can move in the specified direction.
+    /// Uses a box cast to check only the path being traversed, not adjacent tiles.
+    /// </summary>
+    /// <param name="direction">Normalized movement direction</param>
+    /// <param name="distance">Distance to move</param>
+    /// <returns>True if movement is allowed, false if blocked</returns>
+    private bool CanMoveInDirection(Vector2 direction, float distance)
+    {
+        // Get player's collider to determine check size
+        Collider2D playerCollider = GetComponent<Collider2D>();
+        Vector2 boxSize = Vector2.zero;
+        
+        if (playerCollider != null)
+        {
+            // Use collider bounds to determine box size
+            Bounds bounds = playerCollider.bounds;
+            boxSize = new Vector2(bounds.size.x * 0.8f, bounds.size.y * 0.8f); // Slightly smaller to avoid edge cases
+        }
+        else
+        {
+            // Fallback: use a small box if no collider
+            boxSize = new Vector2(0.1f, 0.1f);
+        }
+
+        // Use box cast to check only the movement path
+        ContactFilter2D filter = new ContactFilter2D();
+        filter.NoFilter();
+        filter.useTriggers = false; // Don't check trigger colliders for movement blocking
+
+        RaycastHit2D[] hits = new RaycastHit2D[10];
+        int hitCount = Physics2D.BoxCast(
+            transform.position,
+            boxSize,
+            0f, // No rotation
+            direction,
+            filter,
+            hits,
+            distance
+        );
+
+        // Check if any hit is a blocking object (walls with BlocksPlacement tag)
+        for (int i = 0; i < hitCount; i++)
+        {
+            // Skip the player itself
+            if (hits[i].collider.gameObject == gameObject)
+            {
+                continue;
+            }
+
+            // Check if this is a wall or other blocking object
+            // Objects with BlocksPlacement tag block both placement and movement
+            if (hits[i].collider.gameObject.CompareTag("BlocksPlacement"))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void OnMove(InputAction.CallbackContext context)
@@ -90,13 +157,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnLeftInteract(InputAction.CallbackContext context)
     {
-        Debug.Log("Left interact pressed");
         Interact(HandSlot.Left);
     }
 
     private void OnRightInteract(InputAction.CallbackContext context)
     {
-        Debug.Log("Right interact pressed");
         Interact(HandSlot.Right);
     }
 
@@ -108,8 +173,6 @@ public class PlayerController : MonoBehaviour
     {
         HoldableItem heldItem = GetHeldItem(hand);
         Vector3 frontTilePosition = GetFrontTilePosition();
-        
-        Debug.Log($"Interact called - Hand: {hand}, Held item: {(heldItem != null ? heldItem.name : "null")}, Front tile: {frontTilePosition}");
         
         // Detect what's at the front tile
         // Use ContactFilter2D to include trigger colliders (babies use triggers)
@@ -131,7 +194,6 @@ public class PlayerController : MonoBehaviour
             // Skip the player itself
             if (collider.gameObject == gameObject)
             {
-                Debug.Log($"Skipping player collider: {collider.gameObject.name}");
                 continue;
             }
             
@@ -141,7 +203,6 @@ public class PlayerController : MonoBehaviour
             {
                 frontObject = collider.gameObject;
                 foundItem = item;
-                Debug.Log($"Found HoldableItem: {item.name} at front tile");
                 break;
             }
         }
@@ -149,7 +210,6 @@ public class PlayerController : MonoBehaviour
         // If no collider hit, try finding HoldableItems by distance (fallback)
         if (frontObject == null)
         {
-            Debug.Log("No collider found, trying distance-based detection...");
             HoldableItem[] allItems = FindObjectsByType<HoldableItem>(FindObjectsSortMode.None);
             float closestDistance = float.MaxValue;
             HoldableItem closestItem = null;
@@ -159,7 +219,6 @@ public class PlayerController : MonoBehaviour
                 if (!item.gameObject.activeInHierarchy) continue;
                 
                 float distance = Vector3.Distance(item.transform.position, frontTilePosition);
-                Debug.Log($"Checking {item.name} at distance {distance}");
                 if (distance < 0.2f && distance < closestDistance) // Within ~1.25 cells (more forgiving)
                 {
                     closestDistance = distance;
@@ -171,7 +230,6 @@ public class PlayerController : MonoBehaviour
             {
                 frontObject = closestItem.gameObject;
                 foundItem = closestItem;
-                Debug.Log($"Found closest item by distance: {closestItem.name} at {closestDistance}");
             }
         }
         
@@ -195,23 +253,13 @@ public class PlayerController : MonoBehaviour
                 HoldableItem item = frontObject.GetComponent<HoldableItem>();
                 if (item != null)
                 {
-                    Debug.Log($"Picking up {item.name} with {hand} hand");
                     PickUpItem(item, hand);
                 }
-                else
-                {
-                    Debug.Log($"Front object {frontObject.name} doesn't have HoldableItem component");
-                }
-            }
-            else
-            {
-                Debug.Log("No object found at front tile");
             }
         }
         else
         {
             // Item in hand - put down
-            Debug.Log($"Putting down {heldItem.name} from {hand} hand");
             PutDownItem(heldItem, frontTilePosition, hand);
         }
     }
@@ -223,7 +271,6 @@ public class PlayerController : MonoBehaviour
     {
         if (grid == null)
         {
-            Debug.LogWarning("Grid not found! Using player position + facing direction.");
             return transform.position + (Vector3)(facingDirection * 0.16f);
         }
         
@@ -272,11 +319,36 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks if an item can be placed at the specified position.
+    /// Uses the FrontTileHighlight's trigger collider to detect blocking objects.
+    /// </summary>
+    /// <param name="position">World position to check</param>
+    /// <returns>True if placement is allowed, false if blocked</returns>
+    public bool CanPlaceItemAt(Vector3 position)
+    {
+        // Find the FrontTileHighlight component
+        FrontTileHighlight highlight = FindFirstObjectByType<FrontTileHighlight>();
+        if (highlight != null)
+        {
+            return !highlight.IsPlacementBlocked();
+        }
+
+        // Fallback: if no highlight found, allow placement
+        return true;
+    }
+
+    /// <summary>
     /// Puts down an item from the specified hand at the target position.
     /// </summary>
     private void PutDownItem(HoldableItem item, Vector3 position, HandSlot hand)
     {
         if (item == null) return;
+
+        // Check if placement is allowed at this position
+        if (!CanPlaceItemAt(position))
+        {
+            return;
+        }
         
         // Enable GameObject at position
         item.OnPutDown(position);
