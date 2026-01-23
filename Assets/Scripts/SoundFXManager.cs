@@ -3,12 +3,6 @@ using UnityEngine;
 public class SoundFXManager : MonoBehaviour
 {
     public static SoundFXManager instance;
-
-    [Header("Audio Clips")]
-    [SerializeField] private AudioClip[] hitTableClips;
-    [SerializeField] private AudioClip[] paddleClips;
-    [SerializeField] private AudioClip[] missedClips;
-
     private void Awake()
     {
         if (instance == null)
