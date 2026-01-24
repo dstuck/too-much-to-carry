@@ -74,12 +74,23 @@ public class HandSlotUI : MonoBehaviour
     /// <param name="sprite">Sprite to display (null to show default empty sprite or hide)</param>
     public void SetItemSprite(Sprite sprite)
     {
+        SetItemSprite(sprite, Color.white);
+    }
+    
+    /// <summary>
+    /// Sets the sprite and color to display in this hand slot.
+    /// </summary>
+    /// <param name="sprite">Sprite to display (null to show default empty sprite or hide)</param>
+    /// <param name="color">Color tint to apply to the sprite</param>
+    public void SetItemSprite(Sprite sprite, Color color)
+    {
         if (itemImage != null)
         {
             if (sprite != null)
             {
-                // Show the held item sprite
+                // Show the held item sprite with color tint
                 itemImage.sprite = sprite;
+                itemImage.color = color;
                 itemImage.enabled = true;
             }
             else
@@ -88,6 +99,7 @@ public class HandSlotUI : MonoBehaviour
                 if (defaultEmptySprite != null)
                 {
                     itemImage.sprite = defaultEmptySprite;
+                    itemImage.color = Color.white;
                     itemImage.enabled = true;
                 }
                 else

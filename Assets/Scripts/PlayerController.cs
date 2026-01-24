@@ -70,14 +70,24 @@ public class PlayerController : MonoBehaviour
         if (moveInput.magnitude > 0.1f)
         {
             Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0) * moveSpeed * Time.deltaTime;
-            Vector3 newPosition = transform.position + movement;
+
+            Vector3 xMovement = new Vector3(movement.x, 0, 0);
+            Vector3 newPosition = transform.position + xMovement;
             
             // Check if movement would collide with a wall or other blocking object
-            if (CanMoveInDirection(moveInput.normalized, movement.magnitude))
+            if (CanMoveInDirection(xMovement.normalized, xMovement.magnitude))
             {
                 transform.position = newPosition;
             }
+            Vector3 yMovement = new Vector3(0, movement.y, 0);
+            newPosition = transform.position + yMovement;
             
+            // Check if movement would collide with a wall or other blocking object
+            if (CanMoveInDirection(yMovement.normalized, yMovement.magnitude))
+            {
+                transform.position = newPosition;
+            }
+
             // Update facing direction based on movement
             facingDirection = moveInput.normalized;
             lastMoveInput = moveInput;
@@ -125,7 +135,9 @@ public class PlayerController : MonoBehaviour
             distance
         );
 
-        // Check if any hit is a blocking object (walls with BlocksPlacement tag)
+        // Check if any hit is a blocking object
+        // Since we're using non-trigger colliders, any non-trigger collider should block movement
+        // (The filter already excludes triggers, so all hits here are blocking colliders)
         for (int i = 0; i < hitCount; i++)
         {
             // Skip the player itself
@@ -134,12 +146,9 @@ public class PlayerController : MonoBehaviour
                 continue;
             }
 
-            // Check if this is a wall or other blocking object
-            // Objects with BlocksPlacement tag block both placement and movement
-            if (hits[i].collider.gameObject.CompareTag("BlocksPlacement"))
-            {
-                return false;
-            }
+            // Any non-trigger collider blocks movement
+            // This relies on the collider setup: walls, cribs, changing tables should all have non-trigger colliders
+            return false;
         }
 
         return true;
@@ -269,6 +278,14 @@ public class PlayerController : MonoBehaviour
                 HoldableItem item = frontObject.GetComponent<HoldableItem>();
                 if (item != null)
                 {
+                    // Check if item is already held in the other hand
+                    HoldableItem otherHandItem = GetHeldItem(hand == HandSlot.Left ? HandSlot.Right : HandSlot.Left);
+                    if (otherHandItem == item)
+                    {
+                        // Item is already in the other hand, don't pick it up again
+                        return;
+                    }
+                    
                     PickUpItem(item, hand);
                 }
             }

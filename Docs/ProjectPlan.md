@@ -66,7 +66,7 @@ v0.3
 
 v0.4
 
-- [ ] pan that can be picked up and put on stove
+- [ ] pan on the stove
 - [ ] stove heats up food then starts to burn
-- [ ] add counters and rooms
+- [x] add counters and rooms
 
