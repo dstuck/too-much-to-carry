@@ -196,6 +196,7 @@ public class PlayerController : MonoBehaviour
         HoldableItem foundItem = null;
         
         // Check all colliders found at the front tile
+        // First pass: prioritize babies
         for (int i = 0; i < hitCount; i++)
         {
             Collider2D collider = allHits[i];
@@ -206,13 +207,37 @@ public class PlayerController : MonoBehaviour
                 continue;
             }
             
-            // Check if this object has a HoldableItem component
-            HoldableItem item = collider.GetComponent<HoldableItem>();
-            if (item != null)
+            // Check if this object is a Baby (prioritize babies)
+            Baby baby = collider.GetComponent<Baby>();
+            if (baby != null)
             {
                 frontObject = collider.gameObject;
-                foundItem = item;
+                foundItem = baby;
                 break;
+            }
+        }
+        
+        // Second pass: check for other HoldableItems if no baby found
+        if (frontObject == null)
+        {
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D collider = allHits[i];
+                
+                // Skip the player itself
+                if (collider.gameObject == gameObject)
+                {
+                    continue;
+                }
+                
+                // Check if this object has a HoldableItem component (but not a Baby, already checked)
+                HoldableItem item = collider.GetComponent<HoldableItem>();
+                if (item != null && !(item is Baby))
+                {
+                    frontObject = collider.gameObject;
+                    foundItem = item;
+                    break;
+                }
             }
         }
         
@@ -240,28 +265,52 @@ public class PlayerController : MonoBehaviour
         }
         
         // If no collider hit, try finding HoldableItems by distance (fallback)
+        // Prioritize babies in the fallback search too
         if (frontObject == null)
         {
             HoldableItem[] allItems = FindObjectsByType<HoldableItem>(FindObjectsSortMode.None);
-            float closestDistance = float.MaxValue;
-            HoldableItem closestItem = null;
+            float closestBabyDistance = float.MaxValue;
+            Baby closestBaby = null;
+            float closestOtherDistance = float.MaxValue;
+            HoldableItem closestOtherItem = null;
             
             foreach (var item in allItems)
             {
                 if (!item.gameObject.activeInHierarchy) continue;
                 
                 float distance = Vector3.Distance(item.transform.position, frontTilePosition);
-                if (distance < 0.2f && distance < closestDistance) // Within ~1.25 cells (more forgiving)
+                if (distance < 0.2f) // Within ~1.25 cells (more forgiving)
                 {
-                    closestDistance = distance;
-                    closestItem = item;
+                    // Prioritize babies
+                    if (item is Baby baby)
+                    {
+                        if (distance < closestBabyDistance)
+                        {
+                            closestBabyDistance = distance;
+                            closestBaby = baby;
+                        }
+                    }
+                    else
+                    {
+                        if (distance < closestOtherDistance)
+                        {
+                            closestOtherDistance = distance;
+                            closestOtherItem = item;
+                        }
+                    }
                 }
             }
             
-            if (closestItem != null)
+            // Use baby if found, otherwise use other item
+            if (closestBaby != null)
             {
-                frontObject = closestItem.gameObject;
-                foundItem = closestItem;
+                frontObject = closestBaby.gameObject;
+                foundItem = closestBaby;
+            }
+            else if (closestOtherItem != null)
+            {
+                frontObject = closestOtherItem.gameObject;
+                foundItem = closestOtherItem;
             }
         }
         

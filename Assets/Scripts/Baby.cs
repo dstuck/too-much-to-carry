@@ -507,8 +507,8 @@ public class Baby : HoldableItem, IInteractable
     /// <returns>True if this baby can interact with the held item</returns>
     public bool CanInteractWith(HoldableItem heldItem)
     {
-        // Can only interact if holding a diaper and baby has dirty diaper
-        if (heldItem != null && heldItem is Diaper && isDirty)
+        // Can interact if holding a diaper (regardless of dirty state - allows resetting timer)
+        if (heldItem != null && heldItem is Diaper)
         {
             return true;
         }
@@ -524,11 +524,12 @@ public class Baby : HoldableItem, IInteractable
     {
         if (CanInteractWith(heldItem) && heldItem is Diaper)
         {
-            // Clean the baby
+            // Clean the baby (if dirty) and reset timer
+            bool wasDirty = isDirty;
             isDirty = false;
             timeSinceLastChange = 0f;
             nextPooTime = Random.Range(pooTimeMin, pooTimeMax);
-            Debug.Log($"[Baby {gameObject.name}] Diaper changed! Clean now. Next poo time set to: {nextPooTime:F2} seconds");
+            Debug.Log($"[Baby {gameObject.name}] Diaper changed! {(wasDirty ? "Was dirty, now clean." : "Was already clean.")} Next poo time set to: {nextPooTime:F2} seconds");
             
             // Consume the diaper - disable it
             heldItem.gameObject.SetActive(false);
