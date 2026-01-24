@@ -240,6 +240,22 @@ public class PlayerController : MonoBehaviour
             if (interactable != null && interactable.CanInteractWith(heldItem))
             {
                 interactable.InteractWith(heldItem);
+                
+                // Check if the held item was consumed (disabled) during interaction
+                if (heldItem != null && !heldItem.gameObject.activeInHierarchy)
+                {
+                    // Clear hand reference and fire event
+                    if (hand == HandSlot.Left)
+                    {
+                        leftHand = null;
+                    }
+                    else
+                    {
+                        rightHand = null;
+                    }
+                    OnHandChanged?.Invoke(hand, null);
+                }
+                
                 return;
             }
         }
