@@ -70,14 +70,24 @@ public class PlayerController : MonoBehaviour
         if (moveInput.magnitude > 0.1f)
         {
             Vector3 movement = new Vector3(moveInput.x, moveInput.y, 0) * moveSpeed * Time.deltaTime;
-            Vector3 newPosition = transform.position + movement;
+
+            Vector3 xMovement = new Vector3(movement.x, 0, 0);
+            Vector3 newPosition = transform.position + xMovement;
             
             // Check if movement would collide with a wall or other blocking object
-            if (CanMoveInDirection(moveInput.normalized, movement.magnitude))
+            if (CanMoveInDirection(xMovement.normalized, xMovement.magnitude))
             {
                 transform.position = newPosition;
             }
+            Vector3 yMovement = new Vector3(0, movement.y, 0);
+            newPosition = transform.position + yMovement;
             
+            // Check if movement would collide with a wall or other blocking object
+            if (CanMoveInDirection(yMovement.normalized, yMovement.magnitude))
+            {
+                transform.position = newPosition;
+            }
+
             // Update facing direction based on movement
             facingDirection = moveInput.normalized;
             lastMoveInput = moveInput;
