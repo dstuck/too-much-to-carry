@@ -11,7 +11,7 @@ public class HoldableItem : MonoBehaviour
     /// <summary>
     /// Gets the sprite to display in the UI when this item is held.
     /// </summary>
-    public Sprite GetSprite()
+    public virtual Sprite GetSprite()
     {
         if (spriteRenderer == null)
         {

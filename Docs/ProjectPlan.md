@@ -65,8 +65,24 @@ v0.3
 - [x] diapers on baby cleans diaper
 
 v0.4
-
-- [ ] pan on the stove
-- [ ] stove heats up food then starts to burn
+- [x] pan on the stove
+- [x] stove heats up food then starts to burn
 - [x] add counters and rooms
 
+v0.5
+- [ ] add laundry object that can be folded or unfolded
+- [ ] folded and unfolded have different sprites that must appear in game and in UI
+    - [ ] if unfolded and on a counter, interacting will fold it rather than pick it up
+    - [ ] if unfolded and not on a counter, it will be picked up
+    - [ ] if folded, it will always just be picked up
+- [ ] hamper object that folded clothes will live in
+    no script, but we will need to score at end based on folded clothes in hamper
+- [ ] similarly a platter object that cooked meat will go onto
+
+v0.6 - highlighting
+- [ ] add sparkle particle effect by color based on held objects (green for left, blue for right)
+    - uncooked meat highlights the stove
+    - cooked meat highlights the platter
+    - poopy baby highlights changing table and diapers
+    - unfolded laundry highlights counters (lightly)
+    - folded laundry highlihts the hamper
