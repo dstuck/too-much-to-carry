@@ -125,7 +125,9 @@ public class PlayerController : MonoBehaviour
             distance
         );
 
-        // Check if any hit is a blocking object (walls with BlocksPlacement tag)
+        // Check if any hit is a blocking object
+        // Since we're using non-trigger colliders, any non-trigger collider should block movement
+        // (The filter already excludes triggers, so all hits here are blocking colliders)
         for (int i = 0; i < hitCount; i++)
         {
             // Skip the player itself
@@ -134,12 +136,9 @@ public class PlayerController : MonoBehaviour
                 continue;
             }
 
-            // Check if this is a wall or other blocking object
-            // Objects with BlocksPlacement tag block both placement and movement
-            if (hits[i].collider.gameObject.CompareTag("BlocksPlacement"))
-            {
-                return false;
-            }
+            // Any non-trigger collider blocks movement
+            // This relies on the collider setup: walls, cribs, changing tables should all have non-trigger colliders
+            return false;
         }
 
         return true;
