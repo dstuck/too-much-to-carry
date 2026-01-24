@@ -216,6 +216,29 @@ public class PlayerController : MonoBehaviour
             }
         }
         
+        // If no HoldableItem found, check for IInteractable objects (like Hamper)
+        if (frontObject == null)
+        {
+            for (int i = 0; i < hitCount; i++)
+            {
+                Collider2D collider = allHits[i];
+                
+                // Skip the player itself
+                if (collider.gameObject == gameObject)
+                {
+                    continue;
+                }
+                
+                // Check if this object implements IInteractable
+                IInteractable interactable = collider.GetComponent<IInteractable>();
+                if (interactable != null)
+                {
+                    frontObject = collider.gameObject;
+                    break;
+                }
+            }
+        }
+        
         // If no collider hit, try finding HoldableItems by distance (fallback)
         if (frontObject == null)
         {
