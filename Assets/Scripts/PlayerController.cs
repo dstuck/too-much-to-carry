@@ -278,6 +278,14 @@ public class PlayerController : MonoBehaviour
                 HoldableItem item = frontObject.GetComponent<HoldableItem>();
                 if (item != null)
                 {
+                    // Check if item is already held in the other hand
+                    HoldableItem otherHandItem = GetHeldItem(hand == HandSlot.Left ? HandSlot.Right : HandSlot.Left);
+                    if (otherHandItem == item)
+                    {
+                        // Item is already in the other hand, don't pick it up again
+                        return;
+                    }
+                    
                     PickUpItem(item, hand);
                 }
             }

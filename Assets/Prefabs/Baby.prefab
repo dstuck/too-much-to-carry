@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 6040594058580662588}
-  lonelinessRateOnGround: 1
+  lonelinessRateOnGround: 0.75
   lonelinessRateInCrib: 0.5
   cryingThreshold: 3
   normalSprite: {fileID: -4276666234666725111, guid: 7c3d7dae2702648609f2f2533ae4a4eb, type: 3}
@@ -119,7 +119,6 @@ MonoBehaviour:
   turnChangeInterval: 1
   pooTimeMin: 20
   pooTimeMax: 60
-  dirtyDiaperAngerContribution: 3
 --- !u!61 &4152325675897731266
 BoxCollider2D:
   m_ObjectHideFlags: 0
