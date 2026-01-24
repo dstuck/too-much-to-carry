@@ -79,4 +79,16 @@ public class UIManager : MonoBehaviour
         Sprite sprite = item != null ? item.GetSprite() : null;
         UpdateHandSlot(hand, sprite);
     }
+    
+    /// <summary>
+    /// Public method to refresh a hand slot with the current sprite from a held item.
+    /// Called when a held item's sprite changes (e.g., baby starts crying).
+    /// </summary>
+    /// <param name="hand">Which hand slot to refresh</param>
+    /// <param name="item">The item being held (to get current sprite)</param>
+    public void RefreshHandSlot(HandSlot hand, HoldableItem item)
+    {
+        Sprite sprite = item != null ? item.GetSprite() : null;
+        UpdateHandSlot(hand, sprite);
+    }
 }

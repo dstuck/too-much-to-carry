@@ -4,7 +4,7 @@ using UnityEngine;
 /// Baby-specific implementation of HoldableItem.
 /// Tracks baby emotional state (loneliness, hunger, diaper) and handles crying behavior.
 /// </summary>
-public class Baby : HoldableItem
+public class Baby : HoldableItem, IInteractable
 {
     /// <summary>
     /// Enum representing where the baby is currently located.
@@ -13,7 +13,8 @@ public class Baby : HoldableItem
     {
         Held,
         OnGround,
-        InCrib
+        InCrib,
+        OnChangingTable
     }
 
     [Header("Loneliness Settings")]
@@ -35,10 +36,23 @@ public class Baby : HoldableItem
     [SerializeField] private float turnRate = 50f; // Degrees per second
     [SerializeField] private float turnChangeInterval = 1f; // How often to change direction (seconds)
 
+    [Header("Diaper Settings")]
+    [SerializeField] private float pooTimeMin = 20f; // Minimum time before poo (seconds)
+    [SerializeField] private float pooTimeMax = 60f; // Maximum time before poo (seconds)
+    private const float dirtyDiaperAngerContribution = 8f; // Anger added when diaper is dirty
+
     // Hidden metrics (only loneliness used for v0.2)
     private float hunger = 0f;
     private float diaper = 0f;
     private float loneliness = 0f;
+
+    // Diaper state
+    private bool isDirty = false;
+    private float timeSinceLastChange = 0f;
+    private float nextPooTime;
+    
+    // Components to disable when held (but keep GameObject active for updates)
+    private Collider2D babyCollider;
 
     // State tracking
     private BabyLocation currentLocation = BabyLocation.OnGround;
@@ -51,13 +65,19 @@ public class Baby : HoldableItem
 
     /// <summary>
     /// Calculates the current anger/mad level from all metrics.
-    /// For v0.2, this equals loneliness. In the future, can combine hunger, diaper, etc.
+    /// Combines loneliness and dirty diaper state.
     /// </summary>
     private float CalculateAnger()
     {
-        // For v0.2, anger is just loneliness
-        // Future: return Mathf.Max(loneliness, hunger, diaper) or some combination
-        return loneliness;
+        float anger = loneliness;
+        
+        // Add dirty diaper contribution
+        if (isDirty)
+        {
+            anger += dirtyDiaperAngerContribution;
+        }
+        
+        return anger;
     }
 
     /// <summary>
@@ -92,21 +112,32 @@ public class Baby : HoldableItem
         {
             normalSprite = spriteRenderer.sprite;
         }
+        
+        // Get Collider2D
+        babyCollider = GetComponent<Collider2D>();
 
         // Initialize crawl direction randomly
         float randomAngle = Random.Range(0f, 360f);
         crawlDirection = new Vector2(Mathf.Cos(randomAngle * Mathf.Deg2Rad), Mathf.Sin(randomAngle * Mathf.Deg2Rad));
+
+        // Initialize poo timer with random time
+        nextPooTime = Random.Range(pooTimeMin, pooTimeMax);
+        timeSinceLastChange = 0f;
+        Debug.Log($"[Baby {gameObject.name}] Initialized next poo time: {nextPooTime:F2} seconds");
     }
 
     private void Update()
     {
+        // Always update diaper state and check crying (even when held)
+        UpdateDiaperState();
+        CheckCryingThreshold();
+        
         // Only update loneliness and crawling if baby is not held
         if (currentLocation != BabyLocation.Held)
         {
             UpdateLoneliness();
-            CheckCryingThreshold();
             
-            // Only crawl if on ground (not in crib)
+            // Only crawl if on ground (not in crib or changing table)
             if (currentLocation == BabyLocation.OnGround)
             {
                 UpdateCrawling();
@@ -127,7 +158,8 @@ public class Baby : HoldableItem
                 rate = lonelinessRateOnGround;
                 break;
             case BabyLocation.InCrib:
-                rate = lonelinessRateInCrib;
+            case BabyLocation.OnChangingTable:
+                rate = lonelinessRateInCrib; // Same rate for crib and changing table
                 break;
             case BabyLocation.Held:
                 // Shouldn't reach here, but just in case
@@ -135,6 +167,35 @@ public class Baby : HoldableItem
         }
 
         loneliness += rate * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// Updates diaper state: tracks time since last change and triggers poo event.
+    /// </summary>
+    private void UpdateDiaperState()
+    {
+        // Only update timer if not already dirty
+        if (!isDirty)
+        {
+            timeSinceLastChange += Time.deltaTime;
+            
+            // Check if it's time to poo
+            if (timeSinceLastChange >= nextPooTime)
+            {
+                isDirty = true;
+                timeSinceLastChange = 0f;
+                Debug.Log($"[Baby {gameObject.name}] POO! Diaper is now dirty. Time since last change: {nextPooTime:F2} seconds");
+                // Reset timer for next poo (will be reset when changed)
+            }
+            else
+            {
+                // Debug every 10 seconds to track progress
+                if (Mathf.FloorToInt(timeSinceLastChange) % 10 == 0 && Mathf.FloorToInt((timeSinceLastChange - Time.deltaTime)) % 10 != 0)
+                {
+                    Debug.Log($"[Baby {gameObject.name}] Poo timer: {timeSinceLastChange:F1}s / {nextPooTime:F1}s ({(timeSinceLastChange / nextPooTime * 100f):F1}%)");
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -176,6 +237,12 @@ public class Baby : HoldableItem
             audioSource.loop = true;
             audioSource.Play();
         }
+        
+        // Notify UI to update if baby is being held
+        if (currentLocation == BabyLocation.Held)
+        {
+            RefreshUIForHeldBaby();
+        }
     }
 
     /// <summary>
@@ -202,6 +269,12 @@ public class Baby : HoldableItem
             }
             audioSource.clip = null; // Clear the clip to prevent it from resuming
         }
+        
+        // Notify UI to update if baby is being held
+        if (currentLocation == BabyLocation.Held)
+        {
+            RefreshUIForHeldBaby();
+        }
     }
 
     /// <summary>
@@ -222,10 +295,24 @@ public class Baby : HoldableItem
 
     /// <summary>
     /// Called when the baby is picked up. Sets location to Held.
+    /// Keeps GameObject active so Update() continues to run for poo timer and crying.
     /// </summary>
     public override void OnPickedUp()
     {
-        base.OnPickedUp();
+        Debug.Log($"[Baby {gameObject.name}] Picked up. Poo timer: {timeSinceLastChange:F2}s / {nextPooTime:F2}s");
+        
+        // Don't call base.OnPickedUp() - we want to keep the GameObject active
+        // Instead, hide the sprite and disable the collider
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = false;
+        }
+        
+        if (babyCollider != null)
+        {
+            babyCollider.enabled = false;
+        }
+        
         SetLocation(BabyLocation.Held);
     }
 
@@ -235,9 +322,23 @@ public class Baby : HoldableItem
     /// <param name="position">World position to place the baby</param>
     public override void OnPutDown(Vector3 position)
     {
-        base.OnPutDown(position);
+        // Re-enable sprite and collider (GameObject was kept active)
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = true;
+        }
+        
+        if (babyCollider != null)
+        {
+            babyCollider.enabled = true;
+        }
+        
+        // Don't call base.OnPutDown() since we didn't disable the GameObject
+        transform.position = position;
+        
+        // Note: gameObject.SetActive(true) is not needed since it was never disabled
 
-        // Check if position overlaps with a crib
+        // Check if position overlaps with a crib or changing table (both use "Crib" tag)
         ContactFilter2D filter = new ContactFilter2D();
         filter.NoFilter();
         filter.useTriggers = false; // Cribs use non-trigger colliders
@@ -245,18 +346,33 @@ public class Baby : HoldableItem
         Collider2D[] hits = new Collider2D[10];
         int hitCount = Physics2D.OverlapPoint(position, filter, hits);
 
-        bool isInCrib = false;
+        bool isOnCribObject = false;
+        bool isChangingTable = false;
+        
         for (int i = 0; i < hitCount; i++)
         {
             if (hits[i].gameObject.CompareTag("Crib"))
             {
-                isInCrib = true;
+                isOnCribObject = true;
+                // Differentiate changing table from crib by GameObject name
+                // Changing tables should be named "ChangingTable" or contain "Changing" in the name
+                if (hits[i].gameObject.name.Contains("Changing") || hits[i].gameObject.name.Contains("ChangingTable"))
+                {
+                    isChangingTable = true;
+                }
                 break;
             }
         }
 
-        // Set location based on crib detection
-        SetLocation(isInCrib ? BabyLocation.InCrib : BabyLocation.OnGround);
+        // Set location based on detection
+        if (isOnCribObject)
+        {
+            SetLocation(isChangingTable ? BabyLocation.OnChangingTable : BabyLocation.InCrib);
+        }
+        else
+        {
+            SetLocation(BabyLocation.OnGround);
+        }
 
         // Ensure crying state matches current anger level after being put down
         // This prevents audio from resuming if it was playing when GameObject was disabled
@@ -382,5 +498,69 @@ public class Baby : HoldableItem
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Checks if this baby can interact with the given held item.
+    /// </summary>
+    /// <param name="heldItem">The item currently held by the player (null if hand is empty)</param>
+    /// <returns>True if this baby can interact with the held item</returns>
+    public bool CanInteractWith(HoldableItem heldItem)
+    {
+        // Can only interact if holding a diaper and baby has dirty diaper
+        if (heldItem != null && heldItem is Diaper && isDirty)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Performs the interaction with the given held item.
+    /// Changes the baby's diaper if a clean diaper is held.
+    /// </summary>
+    /// <param name="heldItem">The item currently held by the player (should be a Diaper)</param>
+    public void InteractWith(HoldableItem heldItem)
+    {
+        if (CanInteractWith(heldItem) && heldItem is Diaper)
+        {
+            // Clean the baby
+            isDirty = false;
+            timeSinceLastChange = 0f;
+            nextPooTime = Random.Range(pooTimeMin, pooTimeMax);
+            Debug.Log($"[Baby {gameObject.name}] Diaper changed! Clean now. Next poo time set to: {nextPooTime:F2} seconds");
+            
+            // Consume the diaper - disable it
+            heldItem.gameObject.SetActive(false);
+            
+            // The PlayerController will handle clearing the hand reference
+        }
+    }
+    
+    /// <summary>
+    /// Refreshes the UI to show the current sprite when baby is being held.
+    /// </summary>
+    private void RefreshUIForHeldBaby()
+    {
+        // Find the player controller to check which hand is holding this baby
+        PlayerController player = FindFirstObjectByType<PlayerController>();
+        if (player != null)
+        {
+            // Check if this baby is in left or right hand
+            HoldableItem leftItem = player.GetHeldItem(HandSlot.Left);
+            HoldableItem rightItem = player.GetHeldItem(HandSlot.Right);
+            
+            if (leftItem == this || rightItem == this)
+            {
+                HandSlot hand = (leftItem == this) ? HandSlot.Left : HandSlot.Right;
+                
+                // Find UIManager and refresh the hand slot
+                UIManager uiManager = FindFirstObjectByType<UIManager>();
+                if (uiManager != null)
+                {
+                    uiManager.RefreshHandSlot(hand, this);
+                }
+            }
+        }
     }
 }

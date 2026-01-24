@@ -52,17 +52,17 @@ v0.1
 
 v0.2
 - [x] add baby crying when mad (object and item)
-- [ ] add baby crawling
+- [x] add baby crawling
 - [x] babies get mad after sitting on ground for more than 3 seconds
 - [x] add crib that baby can be put into
 - [x] babies get mad after sitting in crib
 
 v0.3
-- [ ] babies poo after random time
-- [ ] baby cries when dirty diaper
-- [ ] add changing table to put baby on
-- [ ] add diapers and diaper stack
-- [ ] diapers on baby cleans diaper
+- [x] babies poo after random time
+- [x] baby cries when dirty diaper
+- [x] add changing table to put baby on
+- [x] add diapers and diaper stack
+- [x] diapers on baby cleans diaper
 
 v0.4
 
