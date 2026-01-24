@@ -13,20 +13,6 @@ public class UIManager : MonoBehaviour
     [Header("Player Reference")]
     [SerializeField] private PlayerController playerController;
 
-    /// <summary>
-    /// Updates the specified hand slot with the given sprite.
-    /// </summary>
-    /// <param name="hand">Which hand slot to update</param>
-    /// <param name="sprite">Sprite to display (null to show empty)</param>
-    private void UpdateHandSlot(HandSlot hand, Sprite sprite)
-    {
-        HandSlotUI slot = hand == HandSlot.Left ? leftHandSlot : rightHandSlot;
-        if (slot != null)
-        {
-            slot.SetItemSprite(sprite);
-        }
-    }
-
     private void Awake()
     {
         // Find hand slots if not assigned
@@ -77,7 +63,8 @@ public class UIManager : MonoBehaviour
     private void HandleHandChanged(HandSlot hand, HoldableItem item)
     {
         Sprite sprite = item != null ? item.GetSprite() : null;
-        UpdateHandSlot(hand, sprite);
+        Color color = item != null ? item.GetColor() : Color.white;
+        UpdateHandSlot(hand, sprite, color);
     }
     
     /// <summary>
@@ -89,6 +76,22 @@ public class UIManager : MonoBehaviour
     public void RefreshHandSlot(HandSlot hand, HoldableItem item)
     {
         Sprite sprite = item != null ? item.GetSprite() : null;
-        UpdateHandSlot(hand, sprite);
+        Color color = item != null ? item.GetColor() : Color.white;
+        UpdateHandSlot(hand, sprite, color);
+    }
+    
+    /// <summary>
+    /// Updates the specified hand slot with the given sprite and color.
+    /// </summary>
+    /// <param name="hand">Which hand slot to update</param>
+    /// <param name="sprite">Sprite to display (null to show empty)</param>
+    /// <param name="color">Color tint to apply to the sprite</param>
+    private void UpdateHandSlot(HandSlot hand, Sprite sprite, Color color)
+    {
+        HandSlotUI slot = hand == HandSlot.Left ? leftHandSlot : rightHandSlot;
+        if (slot != null)
+        {
+            slot.SetItemSprite(sprite, color);
+        }
     }
 }

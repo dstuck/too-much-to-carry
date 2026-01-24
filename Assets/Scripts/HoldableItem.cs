@@ -19,6 +19,18 @@ public class HoldableItem : MonoBehaviour
         }
         return spriteRenderer != null ? spriteRenderer.sprite : null;
     }
+    
+    /// <summary>
+    /// Gets the color tint to apply to the sprite in the UI when this item is held.
+    /// </summary>
+    public virtual Color GetColor()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+        return spriteRenderer != null ? spriteRenderer.color : Color.white;
+    }
 
     /// <summary>
     /// Called when the item is picked up. Disables the GameObject.

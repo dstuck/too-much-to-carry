@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BlocksPlacement
   - Crib
+  - Stove
   layers:
   - Default
   - TransparentFX
