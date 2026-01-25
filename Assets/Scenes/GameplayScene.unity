@@ -5161,7 +5161,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.0001, y: 0.0001}
+  m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
 --- !u!212 &633318271
 SpriteRenderer:
@@ -10564,8 +10564,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1750df4f13bac46b49905515ee3065c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftHandColor: {r: 0, g: 1, b: 0, a: 0.39215687}
-  rightHandColor: {r: 0, g: 0.5, b: 1, a: 0.39215687}
+  leftHandColor: {r: 0, g: 1, b: 0, a: 1}
+  rightHandColor: {r: 0, g: 0.5, b: 1, a: 1}
   sparkleParticlePrefab: {fileID: 923468407626691848, guid: 55e8ba9dd6bb54a508ebe81ab387fd13, type: 3}
   playerController: {fileID: 292653617}
 --- !u!4 &1362535151
