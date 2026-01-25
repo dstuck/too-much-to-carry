@@ -3380,7 +3380,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5382,7 +5382,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.005
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7247,7 +7247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10564,9 +10564,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1750df4f13bac46b49905515ee3065c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftHandColor: {r: 0, g: 1, b: 0, a: 1}
-  rightHandColor: {r: 0, g: 0.5, b: 1, a: 1}
-  lightHighlightColor: {r: 1, g: 1, b: 1, a: 0.5}
+  leftHandColor: {r: 0, g: 1, b: 0, a: 0.39215687}
+  rightHandColor: {r: 0, g: 0.5, b: 1, a: 0.39215687}
   sparkleParticlePrefab: {fileID: 923468407626691848, guid: 55e8ba9dd6bb54a508ebe81ab387fd13, type: 3}
   playerController: {fileID: 292653617}
 --- !u!4 &1362535151
@@ -10655,7 +10654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
@@ -14152,7 +14151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.005
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
@@ -16772,7 +16771,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.01
       objectReference: {fileID: 0}
     - target: {fileID: 4111703795165098639, guid: 68a09bbcf90044808bb0f155537ece08, type: 3}
       propertyPath: m_LocalPosition.y
