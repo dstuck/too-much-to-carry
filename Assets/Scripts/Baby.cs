@@ -89,6 +89,11 @@ public class Baby : HoldableItem, IInteractable
     /// Gets the current location of the baby.
     /// </summary>
     public BabyLocation Location => currentLocation;
+    
+    /// <summary>
+    /// Gets whether the baby's diaper is dirty.
+    /// </summary>
+    public bool IsDirty => isDirty;
 
     private void Awake()
     {

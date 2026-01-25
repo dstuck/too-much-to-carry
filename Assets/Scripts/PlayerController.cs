@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Tilemaps;
+using System.Linq;
 
 /// <summary>
 /// Handles all player functionality: movement, hands/inventory, and interactions.
@@ -311,6 +312,36 @@ public class PlayerController : MonoBehaviour
             {
                 frontObject = closestOtherItem.gameObject;
                 foundItem = closestOtherItem;
+            }
+        }
+        
+        // If still no object found, try finding IInteractable objects by distance (fallback for Refrigerator, Hamper, etc.)
+        if (frontObject == null)
+        {
+            IInteractable[] allInteractables = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
+                .Where(m => m is IInteractable)
+                .Cast<IInteractable>()
+                .ToArray();
+            
+            float closestDistance = float.MaxValue;
+            IInteractable closestInteractable = null;
+            
+            foreach (var interactable in allInteractables)
+            {
+                MonoBehaviour mb = interactable as MonoBehaviour;
+                if (mb == null || !mb.gameObject.activeInHierarchy) continue;
+                
+                float distance = Vector3.Distance(mb.transform.position, frontTilePosition);
+                if (distance < 0.2f && distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestInteractable = interactable;
+                }
+            }
+            
+            if (closestInteractable != null)
+            {
+                frontObject = (closestInteractable as MonoBehaviour).gameObject;
             }
         }
         

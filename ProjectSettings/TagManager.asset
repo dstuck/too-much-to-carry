@@ -8,6 +8,7 @@ TagManager:
   - Crib
   - Stove
   - Hamper
+  - Refrigerator
   layers:
   - Default
   - TransparentFX
