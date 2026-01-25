@@ -70,19 +70,28 @@ v0.4
 - [x] add counters and rooms
 
 v0.5
-- [ ] add laundry object that can be folded or unfolded
-- [ ] folded and unfolded have different sprites that must appear in game and in UI
+- [x] add laundry object that can be folded or unfolded
+- [x] folded and unfolded have different sprites that must appear in game and in UI
     - [ ] if unfolded and on a counter, interacting will fold it rather than pick it up
     - [ ] if unfolded and not on a counter, it will be picked up
     - [ ] if folded, it will always just be picked up
-- [ ] hamper object that folded clothes will live in
+- [x] hamper object that folded clothes will live in
     no script, but we will need to score at end based on folded clothes in hamper
-- [ ] similarly a platter object that cooked meat will go onto
+- [x] similarly a refrigerator object that cooked meat will go onto
 
 v0.6 - highlighting
-- [ ] add sparkle particle effect by color based on held objects (green for left, blue for right)
-    - uncooked meat highlights the stove
-    - cooked meat highlights the platter
-    - poopy baby highlights changing table and diapers
-    - unfolded laundry highlights counters (lightly)
-    - folded laundry highlihts the hamper
+- [x] create HighlightManager system to manage sparkle effects
+    - [x] create HighlightableObject component that can be attached to objects
+    - [x] create sparkle particle effect prefab (subtle, colored)
+    - [x] highlight color: green for left hand, blue for right hand
+- [x] implement highlighting rules based on held items:
+    - [x] uncooked meat (RawMeat with Raw state) → highlights objects with "Stove" tag
+    - [x] cooked/burnt meat (RawMeat with Cooked or Burnt state) → highlights objects with "Refrigerator" tag or Refrigerator component
+    - [x] poopy baby (Baby with isDirty=true) → highlights:
+        - objects with "Crib" tag AND name contains "Changing" (changing table)
+        - objects with Diaper component (diaper stack)
+    - [x] unfolded laundry (Laundry with Unfolded state) → highlights objects with "Crib" tag AND name does NOT contain "Changing" (counters, lightly)
+    - [x] folded laundry (Laundry with Folded state) → highlights objects with "Hamper" tag
+- [x] update highlighting in real-time as items are picked up/put down
+- [x] ensure sparkle effect is subtle and doesn't obstruct gameplay
+- [x] create Refrigerator script (similar to Hamper) for cooked/burnt meat storage
