@@ -13,6 +13,10 @@ public class UIManager : MonoBehaviour
     [Header("Player Reference")]
     [SerializeField] private PlayerController playerController;
 
+    [Header("Game State UI")]
+    [SerializeField] private TimerDisplay timerDisplay;
+    [SerializeField] private GameOverScreen gameOverScreen;
+
     private void Awake()
     {
         // Find hand slots if not assigned
@@ -36,6 +40,18 @@ public class UIManager : MonoBehaviour
         if (playerController == null)
         {
             playerController = FindFirstObjectByType<PlayerController>();
+        }
+
+        // Find timer display if not assigned
+        if (timerDisplay == null)
+        {
+            timerDisplay = FindFirstObjectByType<TimerDisplay>();
+        }
+
+        // Find game over screen if not assigned
+        if (gameOverScreen == null)
+        {
+            gameOverScreen = FindFirstObjectByType<GameOverScreen>();
         }
     }
 
