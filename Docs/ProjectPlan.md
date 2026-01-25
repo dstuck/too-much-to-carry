@@ -95,3 +95,14 @@ v0.6 - highlighting
 - [x] update highlighting in real-time as items are picked up/put down
 - [x] ensure sparkle effect is subtle and doesn't obstruct gameplay
 - [x] create Refrigerator script (similar to Hamper) for cooked/burnt meat storage
+
+v0.7 - game state
+- [ ] add time limit that ends game
+- [ ] add gameover screen displaying performance and restart
+- [ ] add timer display to UI
+- [ ] score based on baby-happiness (time not crying), steaks cooked, and laundry folded
+
+v0.8 - cleanup
+- [ ] add animated sprites
+- [ ] create my own sprites for player + baby
+...

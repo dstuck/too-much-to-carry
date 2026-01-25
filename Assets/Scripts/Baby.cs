@@ -95,6 +95,11 @@ public class Baby : HoldableItem, IInteractable
     /// </summary>
     public bool IsDirty => isDirty;
 
+    /// <summary>
+    /// Gets whether the baby is currently crying.
+    /// </summary>
+    public bool IsCrying => isCrying;
+
     private void Awake()
     {
         // Get or add AudioSource component

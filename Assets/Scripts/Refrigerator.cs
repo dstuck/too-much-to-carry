@@ -8,13 +8,23 @@ public class Refrigerator : MonoBehaviour, IInteractable
 {
     [Header("Storage")]
     [SerializeField] private int storedCount = 0;
+    [SerializeField] private int cookedCount = 0;
+    [SerializeField] private int burntCount = 0;
 
     /// <summary>
-    /// Gets the number of meat items stored in the refrigerator.
+    /// Gets the number of meat items stored in the refrigerator (both cooked and burnt).
     /// </summary>
     public int GetStoredCount()
     {
         return storedCount;
+    }
+
+    /// <summary>
+    /// Gets the number of cooked (not burnt) meat items stored in the refrigerator.
+    /// </summary>
+    public int GetCookedCount()
+    {
+        return cookedCount;
     }
 
     /// <summary>
@@ -49,9 +59,17 @@ public class Refrigerator : MonoBehaviour, IInteractable
             RawMeat meat = heldItem as RawMeat;
             if (meat.State == RawMeat.MeatState.Cooked || meat.State == RawMeat.MeatState.Burnt)
             {
-                // Store the meat - increment count
+                // Store the meat - increment counts
                 storedCount++;
-                Debug.Log($"[Refrigerator {gameObject.name}] Stored {meat.State} meat. Total count: {storedCount}");
+                if (meat.State == RawMeat.MeatState.Cooked)
+                {
+                    cookedCount++;
+                }
+                else if (meat.State == RawMeat.MeatState.Burnt)
+                {
+                    burntCount++;
+                }
+                Debug.Log($"[Refrigerator {gameObject.name}] Stored {meat.State} meat. Total: {storedCount} (Cooked: {cookedCount}, Burnt: {burntCount})");
 
                 // Consume the meat - disable it
                 heldItem.gameObject.SetActive(false);
